@@ -9,23 +9,49 @@
 <?php
 class Logovanje
 {
-	
+	public $details;
+	public function trenutno() {
+		date_default_timezone_set("Europe/Belgrade");
+		$note = date("[d.m.Y h:i:s]")." ".$this->details."\r\n";
+		error_log($note, 3, "izlazi.log");
+	}
 }
 
-class Doktor
+class Doktor extends Logovanje
 {
 	private $ime, $prezime, $specijalnost;
-	public function construct() {log}
+	private $ispis;
+
+	public function __construct($ime, $prezime, $specijalnost) {
+		$this->ime = $ime;
+		$this->prezime = $prezime;
+		$this->specijalnost = $specijalnost;
+		$this->details = "Kreiran doktor ".$this->ime;
+		$this->ispis = $this->trenutno();
+	}
+
 	public function zakaziPregled(Pacijent $pacijent, Pregled $pregled) {}
 }
 
-class Pacijent
+class Pacijent extends Logovanje
 {
 	private $ime, $prezime, $jmbg, $bzk;
+	private $ispis;
 	private $doktor = null;
-	public function __construct() {log}
-	public function izaberiLekara(Doktor $doktor) {log}
-	public function obaviPregled(Pregled $pregled) {log}
+	public function __construct($ime, $prezime, $jmbg, $bzk) {
+		$this->ime = $ime;
+		$this->prezime = $prezime;
+		$this->jmbg = $jmbg;
+		$this->bzk = $bzk;
+		$this->details = "Kreiran pacijent ".$this->ime;
+		$this->ispis = $this->trenutno();
+	}
+	public function izaberiLekara(Doktor $doktor) {
+		// logovanje
+	}
+	public function obaviPregled(Pregled $pregled) {
+		// logovanje
+	}
 }
 
 abstract class Pregled
@@ -43,8 +69,8 @@ class HolesterolUKrvi extends Pregled {
 	private $vrednost, $vremePoslObroka;
 }
 
-$doktor_1 = new Doktor();
-$pacijent_1 = new Pacijent();
+$doktor_1 = new Doktor("Milan", "Markovic", "sve i svasta");
+$pacijent_1 = new Pacijent("Dragan", "Jovanovic", "1232343458787", "344898");
 
 ?>
 
