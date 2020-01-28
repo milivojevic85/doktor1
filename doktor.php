@@ -45,6 +45,8 @@ class Doktor extends Logovanje
 	public static function zakazanPregled() {
 		if(self::$zakazanPregled == true) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 }
@@ -89,8 +91,9 @@ class Pacijent extends Logovanje
 			$this->details = "Pacijent ".$this->ime." obavlja laboratorijski pregled za ".$pregled->getIme() ;
 			$this->ispis = $this->trenutno();
 			echo $this->details."<br>";
+			echo "Rezultati<br>";
 		} else {
-			echo "no no no no<br>";
+			echo "Pacijent ".$this->ime." nema zakazan laboratorijski pregled za ".$pregled->getIme()."<br>";
 		}
 
 	}
@@ -102,14 +105,27 @@ class Pacijent extends Logovanje
 abstract class Pregled
 {
 	protected $datum, $vreme;
+	
+	public function setTermin($datum, $vreme){
+		$this->datum = $datum;
+		$this->vreme = $vreme;
+	}
+	
+	//// moramo definisati rezultate pre metoda infoPregleda
+	public function infoPregleda(){
+		echo "Datum pregleda: $this->datum, vreme: $this->vreme.<br>";
+	}
+	
 	abstract public function getIme();
 }
 
 class KrvniPritisak extends Pregled {
 	private $gornjaVrednost, $donjaVrednost, $puls;
+	
 	public function getIme() {
 		return "merenje krvnog pritiska";
 	}
+
 }
 class SecerUKrvi extends Pregled {
 	private $vrednost, $vremePoslObroka;
@@ -120,6 +136,7 @@ class SecerUKrvi extends Pregled {
 }
 class HolesterolUKrvi extends Pregled {
 	private $vrednost, $vremePoslObroka;
+	
 	public function getIme() {
 		return "merenje nivoa holesterola u krvi";
 	}
@@ -136,6 +153,7 @@ $doktor_1->zakazujePregled($pregled_secerUkrvi_1, $pacijent_1);
 $doktor_1->zakazujePregled($pregled_krvniPritisak_1, $pacijent_1);
 
 $pacijent_1->obavljaPregled($pregled_secerUkrvi_1);
+
 
 $doktor_2 = new Doktor("Snezana", "Kovacevic", "kardiolog");
 
