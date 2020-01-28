@@ -9,7 +9,7 @@
 <?php
 class Logovanje
 {
-	public $details;
+	protected $details;
 	public function trenutno() {
 		date_default_timezone_set("Europe/Belgrade");
 		$note = date("[d.m.Y h:i:s]")." ".$this->details."\r\n";
@@ -29,12 +29,12 @@ class Doktor extends Logovanje
 		$this->details = "Kreiran doktor ".$this->ime;
 		$this->ispis = $this->trenutno();
 	}
-
 	public function getIme() {
 		return $this->ime;
 	}
-
-	public function zakaziPregled(Pacijent $pacijent, Pregled $pregled) {}
+	public function zakazujePregled(Pregled $pregled, Pacijent $pacijent) {
+		echo "Doktor ".$this->ime." zakazuje pregled za ".$pregled->getIme()." za pacijenta ".$pacijent->getIme()."<br>";
+	}
 }
 
 class Pacijent extends Logovanje
@@ -51,13 +51,18 @@ class Pacijent extends Logovanje
 		$this->details = "Kreiran pacijent ".$this->ime;
 		$this->ispis = $this->trenutno();
 	}
-	public function izaberiLekara(Doktor $doktor) {
-		$this->details = $this->ime. " bira doktora ".$doktor->getIme() ;
+	public function biraLekara(Doktor $doktor) {
+		$this->details = "Pacijent ".$this->ime." bira doktora ".$doktor->getIme() ;
 		$this->ispis = $this->trenutno();
+		echo $this->details."<br>";
 	}
 	public function obavljaPregled(Pregled $pregled) {
-		$this->details = $this->ime. " obavlja laboratorijski pregled ".$pregled->getIme() ;
+		$this->details = "Pacijent ".$this->ime." obavlja laboratorijski pregled za ".$pregled->getIme() ;
 		$this->ispis = $this->trenutno();
+		echo $this->details."<br>";
+	}
+	public function getIme() {
+		return $this->ime;
 	}
 }
 
@@ -70,31 +75,34 @@ abstract class Pregled
 class KrvniPritisak extends Pregled {
 	private $gornjaVrednost, $donjaVrednost, $puls;
 	public function getIme() {
-		return "Krvni pritisak";
+		return "merenje krvnog pritiska";
 	}
 }
 class SecerUKrvi extends Pregled {
 	private $vrednost, $vremePoslObroka;
 	
 	public function getIme() {
-		return "Secer u krvi";
+		return "merenje nivoa secera u krvi";
 	}
 }
 class HolesterolUKrvi extends Pregled {
 	private $vrednost, $vremePoslObroka;
 	public function getIme() {
-		return "Holesterol u krvi";
+		return "merenje nivoa holesterola u krvi";
 	}
 }
 
-$doktor_1 = new Doktor("Marko", "Markovic", "sve i svasta");
-$pacijent_1 = new Pacijent("Dragan", "Jovanovic", "1232343458787", "344898");
-$pacijent_1->izaberiLekara($doktor_1);
+$doktor_1 = new Doktor("Milan", "Markovic", "sve i svasta");
+$pacijent_1 = new Pacijent("Dragan", "Petrovic", "1232343458787", "344898");
+$pacijent_1->biraLekara($doktor_1);
 
 $pregled_secerUkrvi_1 = new SecerUKrvi();
+$pregled_krvniPritisak_1 = new KrvniPritisak();
+
+$doktor_1->zakazujePregled($pregled_secerUkrvi_1, $pacijent_1);
+$doktor_1->zakazujePregled($pregled_krvniPritisak_1, $pacijent_1);
+
 $pacijent_1->obavljaPregled($pregled_secerUkrvi_1);
-
-
 ?>
 
 </body>
