@@ -28,6 +28,7 @@ class Doktor extends Logovanje
 		$this->specijalnost = $specijalnost;
 		$this->details = "Kreiran doktor ".$this->ime;
 		$this->ispis = $this->trenutno();
+		echo $this->details."<br>"; 
 	}
 	public function getIme() {
 		return $this->ime;
@@ -50,6 +51,7 @@ class Pacijent extends Logovanje
 		$this->bzk = $bzk;
 		$this->details = "Kreiran pacijent ".$this->ime;
 		$this->ispis = $this->trenutno();
+		echo $this->details."<br>";
 	}
 	public function biraLekara(Doktor $doktor) {
 		$this->details = "Pacijent ".$this->ime." bira doktora ".$doktor->getIme() ;
@@ -103,6 +105,12 @@ $doktor_1->zakazujePregled($pregled_secerUkrvi_1, $pacijent_1);
 $doktor_1->zakazujePregled($pregled_krvniPritisak_1, $pacijent_1);
 
 $pacijent_1->obavljaPregled($pregled_secerUkrvi_1);
+
+$doktor_2 = new Doktor("Snezana", "Kovacevic", "kardiolog");
+
+$pacijent_2 = new Pacijent("Goran", "Kovac", "4324343243243", "576998");
+$pacijent_2->biraLekara($doktor_1);
+$pacijent_2->biraLekara($doktor_2);
 ?>
 
 </body>
