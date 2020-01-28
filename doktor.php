@@ -21,6 +21,7 @@ class Doktor extends Logovanje
 {
 	private $ime, $prezime, $specijalnost;
 	private $ispis;
+	private static $zakazanPregled = false;
 
 	public function __construct($ime, $prezime, $specijalnost) {
 		$this->ime = $ime;
@@ -34,7 +35,17 @@ class Doktor extends Logovanje
 		return $this->ime;
 	}
 	public function zakazujePregled(Pregled $pregled, Pacijent $pacijent) {
-		echo "Doktor ".$this->ime." zakazuje pregled za ".$pregled->getIme()." za pacijenta ".$pacijent->getIme()."<br>";
+		if ($pacijent->izabranLekar() == true) {
+			echo "Doktor ".$this->ime." zakazuje pregled za ".$pregled->getIme()." za pacijenta ".$pacijent->getIme()."<br>";
+			self::$zakazanPregled = true;
+		} else {
+			echo "Pacijent ".$pacijent->getIme()." nije izabrao doktora ".$this->ime.". Nema zakazivanja pregleda.<br>";
+		}
+	}
+	public static function zakazanPregled() {
+		if(self::$zakazanPregled == true) {
+			return true;
+		}
 	}
 }
 
@@ -42,8 +53,9 @@ class Pacijent extends Logovanje
 {
 	private $ime, $prezime, $jmbg, $bzk;
 	private $ispis;
-	private $doktor = null;
-	private $pregled = null;
+	private $doc = null;
+	private $izabranLekar = false;
+	//private $pregled = null;
 	public function __construct($ime, $prezime, $jmbg, $bzk) {
 		$this->ime = $ime;
 		$this->prezime = $prezime;
@@ -54,14 +66,33 @@ class Pacijent extends Logovanje
 		echo $this->details."<br>";
 	}
 	public function biraLekara(Doktor $doktor) {
-		$this->details = "Pacijent ".$this->ime." bira doktora ".$doktor->getIme() ;
-		$this->ispis = $this->trenutno();
-		echo $this->details."<br>";
+		if ($this->doc == null) {
+			$this->doc = $doktor->getIme();
+			$this->izabranLekar = true;
+			$this->details = "Pacijent ".$this->ime." bira doktora ".$doktor->getIme() ;
+			$this->ispis = $this->trenutno();
+			echo $this->details."<br>";
+		} else {
+			echo "Pacijent ".$this->ime." vec ima izabranog lekara<br>";
+		}	
 	}
+	public function izabranLekar() {
+		if($this->izabranLekar == true) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public function obavljaPregled(Pregled $pregled) {
-		$this->details = "Pacijent ".$this->ime." obavlja laboratorijski pregled za ".$pregled->getIme() ;
-		$this->ispis = $this->trenutno();
-		echo $this->details."<br>";
+		if (Doktor::zakazanPregled() == true) {
+			$this->details = "Pacijent ".$this->ime." obavlja laboratorijski pregled za ".$pregled->getIme() ;
+			$this->ispis = $this->trenutno();
+			echo $this->details."<br>";
+		} else {
+			echo "no no no no<br>";
+		}
+
 	}
 	public function getIme() {
 		return $this->ime;
@@ -111,6 +142,7 @@ $doktor_2 = new Doktor("Snezana", "Kovacevic", "kardiolog");
 $pacijent_2 = new Pacijent("Goran", "Kovac", "4324343243243", "576998");
 $pacijent_2->biraLekara($doktor_1);
 $pacijent_2->biraLekara($doktor_2);
+$pacijent_2->biraLekara($doktor_1);
 ?>
 
 </body>
